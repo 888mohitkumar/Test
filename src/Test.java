@@ -37,6 +37,7 @@ public class Test {
 		final EmpLoyee e = new EmpLoyee();
 		// final MyInterface my1 = (x) -> e.template(x);
 		final MyInterface my1 = e::template;
-		my1.sisplay("zzz");
+		// my1.sisplay("zzz");
+		System.out.println("Pagal");
 	}
 }
