@@ -1,8 +1,6 @@
 import java.util.Arrays;
 import java.util.List;
 
-import com.sun.xml.internal.ws.util.StringUtils;
-
 class EmpLoyee {
 	static String name = "RAM";
 
@@ -29,7 +27,7 @@ public class Test {
 	public static void main(final String[] args) throws InterruptedException {
 		System.out.println("Test ::::::::::::::");
 		final List<String> messages = Arrays.asList("hello", "baeldung", "readers!");
-		messages.forEach(a -> StringUtils.capitalize(a));
+		// messages.forEach(a -> StringUtils.capitalize(a));
 		// messages.forEach(a -> System.out.println(a));
 		messages.forEach(System.out::println);
 		// final MyInterface my = (x) -> EmpLoyee.showName(x);
