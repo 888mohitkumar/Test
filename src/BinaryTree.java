@@ -9,7 +9,29 @@ import java.util.Stack;
 
 public class BinaryTree {
 
+	static boolean result1 = false;
+
+	static boolean result2 = false;
+
+	// Function to convert given binary Tree to its mirror
+	public static void convertToMirror(final Node root) {
+		// base case: if tree is empty
+		if (root == null) {
+			return;
+		}
+
+		// convert left subtree
+		convertToMirror(root.left);
+
+		// convert right subtree
+		convertToMirror(root.right);
+
+		// swap left subtree with right subtree
+		swap(root);
+	}
+
 	public static void main(final String args[]) {
+
 		final BinaryTree tree = new BinaryTree();
 		tree.root = new Node(4);
 		tree.root.left = new Node(2);
@@ -30,11 +52,32 @@ public class BinaryTree {
 		// tree.leftView(tree.root);
 		// tree.bottomView(tree.root);
 		// tree.levelOrderTraversal(tree.root);
-		tree.levelOrderTraversalInSprial(tree.root);
+		// tree.levelOrderTraversalInSprial(tree.root);
+		// tree.pathToNode(tree.root, 7);
+		// tree.LCAbyPathArray(tree.root, 20, 3);
+		// final Node temp = tree.LCA(tree.root, 20, 3);
+
+		// final Node temp = tree.LCA_Final(tree.root, 20, 300);
+		// System.out.println("In main method and LCA is ::" + temp.data);
+		tree.levelOrderTraversal(tree.root);
+		convertToMirror(tree.root);
+		System.out.println("After Mirror");
+		tree.levelOrderTraversal(tree.root);
 
 	}
 
+	public static void swap(final Node root) {
+		if (root == null) {
+			return;
+		}
+
+		final Node temp = root.left;
+		root.left = root.right;
+		root.right = temp;
+	}
+
 	Node root;
+
 	Node prev;
 
 	public void bottomView(final Node root) {
@@ -44,6 +87,26 @@ public class BinaryTree {
 		for (final Integer i : hm.keySet()) {
 			System.out.print(i + "   ");
 			System.out.println(hm.get(i));
+		}
+	}
+
+	public boolean findPathToNode(final Node root, final int element, final List<Integer> al) {
+		if (root == null) {
+			return false;
+		}
+		al.add(root.data);
+		if (root.data == element) {
+			System.out.println("Element has found and path for element  :::" + element);
+			for (final Integer i : al) {
+				System.out.println(i);
+			}
+			return true;
+		}
+		if (findPathToNode(root.left, element, al) || findPathToNode(root.right, element, al)) {
+			return true;
+		} else {
+			al.remove(al.size() - 1);
+			return false;
 		}
 	}
 
@@ -58,6 +121,18 @@ public class BinaryTree {
 		} else {
 			return rightHeight + 1;
 		}
+	}
+
+	public boolean getPathToNode(final Node root, final int element, final int arr[], int index) {
+		if (root == null) {
+			return false;
+		}
+		arr[index++] = root.data;
+		if (root.data == element) {
+			printArray(arr, index);
+			return true;
+		}
+		return getPathToNode(root.left, element, arr, index) || getPathToNode(root.right, element, arr, index);
 	}
 
 	boolean isBST() {
@@ -88,26 +163,53 @@ public class BinaryTree {
 
 	}
 
-	/*
-	 * boolean isBST(final Node node) {
-	 *
-	 * if (node != null) { if (!isBST(node.left)) { return false; }
-	 *
-	 * // allows only distinct values node if (prev != null && node.data <=
-	 * prev.data) { return false; } prev = node; return isBST(node.right); }
-	 * return true; }
-	 */
+	public Node LCA(final Node root, final int element1, final int element2) {
+		final Optional<Node> optional = Optional.ofNullable(root);
+		if (!optional.isPresent()) {
+			return root;
+		}
+		if (root.data == element1) {
+			result1 = true;
+			return root;
+		}
+		if (root.data == element2) {
+			result2 = true;
+			return root;
+		}
+		final Node leftRoot = LCA(root.left, element1, element2);
+		final Node rightRoot = LCA(root.right, element1, element2);
 
-	/*
-	 * boolean isBST(final Node node) {
-	 *
-	 * if (node == null) { return true; } if (!isBST(node.left)) { return false;
-	 * }
-	 *
-	 * // allows only distinct values node if (prev != null && node.data <=
-	 * prev.data) { return false; } else { prev = node; } if
-	 * (!isBST(node.right)) { return false; } else { return true; } }
-	 */
+		if (leftRoot != null && rightRoot != null) {
+			return root;
+		} else {
+			return leftRoot == null ? rightRoot : leftRoot;
+		}
+	}
+
+	public Node LCA_Final(final Node root, final int element1, final int element2) {
+
+		final Node temp = LCA(root, element1, element2);
+		if (result1 && result2) {
+			return temp;
+		}
+		return null;
+	}
+
+	public void LCAbyPathArray(final Node root, final int el1, final int el2) {
+		final List<Integer> al1 = new ArrayList<>();
+		final List<Integer> al2 = new ArrayList<>();
+		if (findPathToNode(root, el1, al1) && findPathToNode(root, el2, al2)) {
+			for (int i = 0; i < al1.size() && i < al2.size(); i++) {
+				if (al1.get(i) != al2.get(i)) {
+					System.out.println("LCA is ::" + al1.get(i - 1));
+					break;
+				}
+			}
+		} else {
+			System.out.println("Element do not exists");
+		}
+
+	}
 
 	void leftView(final Node root) {
 		if (root == null) {
@@ -164,6 +266,27 @@ public class BinaryTree {
 		}
 	}
 
+	/*
+	 * boolean isBST(final Node node) {
+	 *
+	 * if (node != null) { if (!isBST(node.left)) { return false; }
+	 *
+	 * // allows only distinct values node if (prev != null && node.data <=
+	 * prev.data) { return false; } prev = node; return isBST(node.right); }
+	 * return true; }
+	 */
+
+	/*
+	 * boolean isBST(final Node node) {
+	 *
+	 * if (node == null) { return true; } if (!isBST(node.left)) { return false;
+	 * }
+	 *
+	 * // allows only distinct values node if (prev != null && node.data <=
+	 * prev.data) { return false; } else { prev = node; } if
+	 * (!isBST(node.right)) { return false; } else { return true; } }
+	 */
+
 	public void levelOrderTraversalInSprial(final Node root) {
 		final Optional optional = Optional.ofNullable(root);
 		if (!optional.isPresent()) {
@@ -202,6 +325,19 @@ public class BinaryTree {
 				}
 
 			}
+		}
+	}
+
+	public void pathToNode(final Node root, final int element) {
+		final int arr[] = new int[500];
+		final int index = 0;
+		getPathToNode(root, element, arr, index);
+	}
+
+	private void printArray(final int[] arr, final int index) {
+
+		for (int i = 0; i < index; i++) {
+			System.out.println(arr[i]);
 		}
 	}
 
